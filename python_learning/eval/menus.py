@@ -1,5 +1,6 @@
 import utils as u
-from models import Personnage, Action
+from models import Action
+
 
 def selectionner_action():
     while True:
@@ -17,10 +18,16 @@ def selectionner_personnage(personnages, msg: str = "Choisissez un personnage: "
     while True:
         u.rafraichir_console()
         for i, personnage in enumerate(personnages):
-            print(f"{i+1} - {personnage.nom}")
+            print(f"{i+1} - {personnage.nom} {'(mort)' if not personnage.vivant else ''}")
         user_input = u.ask_int_input(msg)
         if user_input > len(personnages) or user_input < 1:
             print("Numéro invalide.")
             u.wait_for_enter()
             continue
         return personnages[user_input - 1]
+
+
+def afficher_choix():
+    print("1 - Effectuer une action")
+    print("2 - Quitter")
+    return u.ask_int_input("Choisissez une option: ")

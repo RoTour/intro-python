@@ -1,5 +1,5 @@
-from enum import Enum
 import random
+from enum import Enum
 
 
 class Niveau(Enum):
@@ -13,12 +13,24 @@ class Action(Enum):
     ATTAQUER = "Attaquer"
 
 
+class Status(Enum):
+    CONTINUE = "Continue"
+    STOP = "Stop"
+
+multiplicateurs = {
+    Niveau.DEBUTANT: 1,
+    Niveau.INTERMEDIAIRE: 1.1,
+    Niveau.EXPERT: 1.25
+}
+
+
 class Personnage:
     nombreDeVies: int
     nom: str
     force: int
     arme: str
     niveau: Niveau
+    vivant: bool = True
     experience: int = 0
 
     def __init__(self, _nom: str, _force: int, _arme: str, _nombreDeVies: int = 2, _niveau: Niveau = Niveau.DEBUTANT):
@@ -40,18 +52,20 @@ class Personnage:
     def frapper(self, cible, puissance: int = None):
         if puissance is None:
             puissance = random.randint(self.force - 5, self.force)
-        cible.force -= puissance
+        cible.force -= puissance * multiplicateurs[self.niveau]
         if cible.force <= 0:
             cible.nombreDeVies -= 1
             cible.force = 25
         if cible.nombreDeVies <= 0:
             print(f"{self.nom} frappe {cible.nom} avec {self.arme} et l'achève!")
-            return
+            cible.vivant = False
+            return True
         self.experience += 1
         cible.experience += 1
         self.check_level_up()
         cible.check_level_up()
         print(f"{self.nom} frappe {cible.nom} et lui enlève {self.force} points de vie. "
               f" (restant à {cible.nom}: Force: {cible.force}, Vies: {cible.nombreDeVies})")
-        print(f"EXP: {self.nom}: {self.experience} ({self.niveau.value}) | {cible.nom}: {cible.experience} ({self.niveau.value})")
-
+        print(
+            f"EXP: {self.nom}: {self.experience} ({self.niveau.value}) | {cible.nom}: {cible.experience} ({self.niveau.value})")
+        return False
