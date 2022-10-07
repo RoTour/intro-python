@@ -21,6 +21,6 @@ def selectionner_personnage(personnages, msg: str = "Choisissez un personnage: "
         user_input = u.ask_int_input(msg)
         if user_input > len(personnages) or user_input < 1:
             print("Numéro invalide.")
-            wait_for_enter()
+            u.wait_for_enter()
             continue
         return personnages[user_input - 1]
