@@ -1,11 +1,15 @@
-from models import Character, Action, Status
+from models import Character, Action, Status, Mentor, Bachelor
 import utils as u
 import menus
 
 # All variables and functions in this program are in french for consistency with the required attributes and methods
 # from the "Personnage" class.
 
-players = []
+players = [
+    Mentor("Robin", 25, "Gourd"),
+    Bachelor("Lucas", 25, "Cringe"),
+    Bachelor("Anthony", 25, "Poison"),
+]
 
 
 def create_player():
@@ -20,14 +24,19 @@ def create_player():
     u.wait_for_enter()
 
 
-def attack(attacker):
+def attack(attacker, action_type: Action):
     target = menus.select_player(
         players,
-        f"{attacker.name}, choosse the player to attack: "
+        f"{attacker.name}, choose the player to attack: "
     )
-    is_killed = attacker.attack(target)
-    if is_killed:
-        players.remove(target)
+    if action_type == Action.PHYSICAL:
+        if attacker.physical_attack(target):
+            players.remove(target)
+    elif action_type == Action.SPELL:
+        if attacker.cast_spell(target, u.select_item(attacker.spells, "Select a spell: ")):
+            players.remove(target)
+    else:
+        raise ValueError("Invalid action type")
     u.wait_for_enter()
 
 
@@ -42,16 +51,18 @@ def handle_character_creation():
         create_player()
 
 
-def play_turn(personnage):
-    print(f"{personnage.name}'s turn")
-    print(f"Remaining players: {', '.join([personnage.name for personnage in players])}")
+def play_turn(player):
+    print(f"{player.name}'s turn")
+    print(f"Remaining players: {', '.join([player.name for player in players])}")
     choice = menus.display_choices()
     if choice == 1:
-        action = menus.select_action()
-        if action == Action.ATTACK:
-            attack(personnage)
+        action = menus.select_action(player.name)
+        if action == Action.PHYSICAL:
+            attack(player, Action.PHYSICAL)
         elif action == Action.CHAT:
-            chat(personnage)
+            chat(player)
+        elif action == Action.SPELL:
+            attack(player, Action.SPELL)
         return Status.CONTINUE
     elif choice == 2:
         return Status.STOP

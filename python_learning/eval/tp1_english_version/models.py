@@ -9,13 +9,19 @@ class ExperienceLevel(Enum):
 
 
 class Action(Enum):
-    CHAT = "Chat"
-    ATTACK = "Attack"
+    PHYSICAL = 1
+    SPELL = 2
+    CHAT = 3
 
 
 class Status(Enum):
     CONTINUE = "Continue"
     STOP = "Stop"
+
+
+class CharacterType(Enum):
+    MENTOR = "Mentor"
+    BACHELOR = "Bachelor"
 
 
 multipliers = {
@@ -33,6 +39,8 @@ class Character:
     level: ExperienceLevel
     is_alive: bool = True
     experience: int = 0
+    spells = []
+    specialisation: CharacterType
 
     def __init__(self, _nom: str, _force: int, _arme: str, _nombreDeVies: int = 2, _niveau: ExperienceLevel = ExperienceLevel.BEGINNER):
         self.name = _nom
@@ -50,10 +58,17 @@ class Character:
     def chat(self, message: str):
         print(f"{self.name} says: {message}")
 
-    def attack(self, target, power: int = None):
+    def physical_attack(self, target, power: int = None):
         if power is None:
             power = random.randint(self.strength - 5, self.strength)
-        target.strength -= power * multipliers[self.level]
+        return Character.deal_damage(self, target, power)
+
+    def cast_spell(self, target, spell):
+        return Character.deal_damage(self, target, spell.power)
+
+    def deal_damage(self, target, damage):
+        final_damage = damage * multipliers[self.level]
+        target.strength -= final_damage
         if target.strength <= 0:
             target.lives -= 1
             target.strength = 25
@@ -65,7 +80,42 @@ class Character:
         target.experience += 1
         self.check_level_up()
         target.check_level_up()
-        print(f"{self.name} hits {target.name} with {self.weapon}. He has {target.strength} strength point and {target.lives} left")
+        print(f"{self.name} inflicts {final_damage} to {target.name} with {self.weapon}. {target.name} now has {target.strength} strength point and {target.lives} lives left")
         print(
             f"EXP: {self.name}: {self.experience} ({self.level.value}) | {target.name}: {target.experience} ({self.level.value})")
         return False
+
+
+
+class Spell():
+    power: float
+    name: str
+
+    def __init__(self, _name: str, _power: float):
+        self.name = _name
+        self.power = _power
+
+    def __str__(self):
+        return f"{self.name} (power: {self.power})"
+
+
+class Mentor(Character):
+
+    def __init__(self, _nom: str, _force: int, _arme: str):
+        super().__init__(_nom, _force, _arme)
+        self.spells = [
+            Spell("Exam surprise", self.strength * 2),
+            Spell("Ytrack challenge", self.strength * 2.25),
+        ]
+        self.specialisation = CharacterType.MENTOR
+
+
+class Bachelor(Character):
+
+    def __init__(self, _nom: str, _force: int, _arme: str):
+        super().__init__(_nom, _force, _arme)
+        self.spells = [
+            Spell("Stack overflow", self.strength * 1.5),
+            Spell("Google", self.strength * 1.75),
+        ]
+        self.specialisation = CharacterType.BACHELOR

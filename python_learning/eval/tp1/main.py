@@ -25,7 +25,7 @@ def attaquer(attaquant):
         personnages,
         f"{attaquant.name}, choisissez le personnage à attaquer: "
     )
-    cible_est_tuee = attaquant.attack(personnage_cible)
+    cible_est_tuee = attaquant.physical_attack(personnage_cible)
     if cible_est_tuee:
         personnages.remove(personnage_cible)
     u.wait_for_enter()

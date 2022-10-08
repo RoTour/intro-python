@@ -2,16 +2,16 @@ import utils as u
 from models import Action
 
 
-def select_action():
+def select_action(player_name):
     while True:
         u.clear_console()
-        print("1 - Attack")
-        print("2 - Char")
-        user_input = u.ask_int_input("Select your next action")
-        if user_input == 1:
-            return Action.ATTACK
-        elif user_input == 2:
-            return Action.CHAT
+        print("1 - Physical attack")
+        print("2 - Cast a spell")
+        print("3 - Chat")
+        user_input = u.ask_int_input(f"Select {player_name} next action: ")
+        if user_input in [Action.CHAT.value, Action.PHYSICAL.value, Action.SPELL.value]:
+            return Action(user_input)
+        print("Invalid action.")
 
 
 def select_player(players, msg: str = "Select a player: "):
