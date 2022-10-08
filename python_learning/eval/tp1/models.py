@@ -52,20 +52,20 @@ class Personnage:
     def frapper(self, cible, puissance: int = None):
         if puissance is None:
             puissance = random.randint(self.force - 5, self.force)
-        cible.force -= puissance * multiplicateurs[self.niveau]
-        if cible.force <= 0:
-            cible.nombreDeVies -= 1
-            cible.force = 25
-        if cible.nombreDeVies <= 0:
-            print(f"{self.nom} frappe {cible.nom} avec {self.arme} et l'achève!")
-            cible.vivant = False
+        cible.strength -= puissance * multiplicateurs[self.niveau]
+        if cible.strength <= 0:
+            cible.lives -= 1
+            cible.strength = 25
+        if cible.lives <= 0:
+            print(f"{self.nom} frappe {cible.name} avec {self.arme} et l'achève!")
+            cible.is_alive = False
             return True
         self.experience += 1
         cible.experience += 1
         self.check_level_up()
         cible.check_level_up()
-        print(f"{self.nom} frappe {cible.nom} et lui enlève {self.force} points de vie. "
-              f" (restant à {cible.nom}: Force: {cible.force}, Vies: {cible.nombreDeVies})")
+        print(f"{self.nom} frappe {cible.name} et lui enlève {self.force} points de vie. "
+              f" (restant à {cible.name}: Force: {cible.strength}, Vies: {cible.lives})")
         print(
-            f"EXP: {self.nom}: {self.experience} ({self.niveau.value}) | {cible.nom}: {cible.experience} ({self.niveau.value})")
+            f"EXP: {self.nom}: {self.experience} ({self.niveau.value}) | {cible.name}: {cible.experience} ({self.niveau.value})")
         return False

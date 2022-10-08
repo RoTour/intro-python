@@ -23,9 +23,9 @@ def creer_personnage():
 def attaquer(attaquant):
     personnage_cible = menus.selectionner_personnage(
         personnages,
-        f"{attaquant.nom}, choisissez le personnage à attaquer: "
+        f"{attaquant.name}, choisissez le personnage à attaquer: "
     )
-    cible_est_tuee = attaquant.frapper(personnage_cible)
+    cible_est_tuee = attaquant.attack(personnage_cible)
     if cible_est_tuee:
         personnages.remove(personnage_cible)
     u.wait_for_enter()
@@ -33,7 +33,7 @@ def attaquer(attaquant):
 
 def parler():
     personnage_a_utiliser = menus.selectionner_personnage(personnages, "Choisissez le personnage qui va parler: ")
-    personnage_a_utiliser.parler(u.ask_str_input("Entrez le message à dire: "))
+    personnage_a_utiliser.chat(u.ask_str_input("Entrez le message à dire: "))
     u.wait_for_enter()
 
 
@@ -44,8 +44,8 @@ def gestion_creation_personnages():
 
 
 def tour_de_jeu(personnage):
-    print(f"Tour de {personnage.nom}")
-    print(f"Personnages restants: {', '.join([personnage.nom for personnage in personnages])}")
+    print(f"Tour de {personnage.name}")
+    print(f"Personnages restants: {', '.join([personnage.name for personnage in personnages])}")
     choix = menus.afficher_choix()
     if choix == 1:
         action = menus.selectionner_action()
@@ -70,7 +70,7 @@ def main():
         joueur_en_cours += 1
         if joueur_en_cours >= len(personnages):
             joueur_en_cours = 0
-    print(f"{personnages[0].nom} à gagné !")
+    print(f"{personnages[0].name} à gagné !")
 
 
 main()

@@ -18,7 +18,7 @@ def selectionner_personnage(personnages, msg: str = "Choisissez un personnage: "
     while True:
         u.rafraichir_console()
         for i, personnage in enumerate(personnages):
-            print(f"{i+1} - {personnage.nom} {'(mort)' if not personnage.vivant else ''}")
+            print(f"{i+1} - {personnage.name} {'(mort)' if not personnage.is_alive else ''}")
         user_input = u.ask_int_input(msg)
         if user_input > len(personnages) or user_input < 1:
             print("Numéro invalide.")
