@@ -1,14 +1,14 @@
 import utils as u
-from models import Action
+from models import Action, Character
 
 
-def select_action(player_name):
+def select_action(player: Character):
     while True:
         u.clear_console()
         print("1 - Physical attack")
-        print("2 - Cast a spell")
+        print(f"2 - Cast a spell (Remaining mana points: {player.mana_points})")
         print("3 - Chat")
-        user_input = u.ask_int_input(f"Select {player_name} next action: ")
+        user_input = u.ask_int_input(f"Select {player.name} next action: ")
         if user_input in [Action.CHAT.value, Action.PHYSICAL.value, Action.SPELL.value]:
             return Action(user_input)
         print("Invalid action.")

@@ -30,7 +30,7 @@ def clear_console():
 
 
 def wait_for_enter():
-    input("Appuyez sur Entrée pour continuer...")
+    input("Press enter to continue...")
 
 
 def select_item(items, msg: str = "Select an item: "):

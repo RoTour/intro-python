@@ -1,8 +1,8 @@
-from models import Character, Action, Status, Mentor, Bachelor
+from models import Action, Status, Mentor, Bachelor
 import utils as u
 import menus
 
-# All variables and functions in this program are in french for consistency with the required attributes and methods
+# All variables and functions in this program are in French for consistency with the required attributes and methods
 # from the "Personnage" class.
 
 players = [
@@ -14,7 +14,7 @@ players = [
 
 def create_player():
     u.clear_console()
-    new_player = Character(
+    new_player = Bachelor(
         u.ask_str_input(f"Enter player {len(players) + 1}'s name: "),
         u.ask_int_input("Enter player's strength: "),
         u.ask_str_input("Enter player's weapon: ")
@@ -29,15 +29,27 @@ def attack(attacker, action_type: Action):
         players,
         f"{attacker.name}, choose the player to attack: "
     )
+    action = None
     if action_type == Action.PHYSICAL:
-        if attacker.physical_attack(target):
-            players.remove(target)
-    elif action_type == Action.SPELL:
-        if attacker.cast_spell(target, u.select_item(attacker.spells, "Select a spell: ")):
-            players.remove(target)
-    else:
-        raise ValueError("Invalid action type")
+        action = attacker.physical_attack
+    if action_type == Action.SPELL:
+        action = attacker.cast_spell
+
+    while True:
+        player_killed, attack_successful = action(target) if action_type == Action.PHYSICAL \
+            else action(
+            target,
+            u.select_item(attacker.spells, f"(Mana points: {attacker.mana_points}) | Select a spell: ")
+        )
+        if attack_successful:
+            break
+        u.wait_for_enter()
+
+    if player_killed:
+        players.remove(target)
+
     u.wait_for_enter()
+    return player_killed
 
 
 def chat(character):
@@ -56,16 +68,16 @@ def play_turn(player):
     print(f"Remaining players: {', '.join([player.name for player in players])}")
     choice = menus.display_choices()
     if choice == 1:
-        action = menus.select_action(player.name)
+        action = menus.select_action(player)
         if action == Action.PHYSICAL:
-            attack(player, Action.PHYSICAL)
+            return Status.CONTINUE, attack(player, Action.PHYSICAL)
         elif action == Action.CHAT:
             chat(player)
+            return Status.CONTINUE, False
         elif action == Action.SPELL:
-            attack(player, Action.SPELL)
-        return Status.CONTINUE
+            return Status.CONTINUE, attack(player, Action.SPELL)
     elif choice == 2:
-        return Status.STOP
+        return Status.STOP, False
 
 
 def main():
@@ -73,11 +85,11 @@ def main():
     current_player = 0
     while len(players) > 1:
         u.clear_console()
-        status = play_turn(players[current_player])
+        status, player_killed = play_turn(players[current_player])
         if status is Status.STOP:
             print("Quitting game")
             return
-        current_player += 1
+        current_player += 0 if player_killed else 1
         if current_player >= len(players):
             current_player = 0
     print(f"{players[0].name} won !")

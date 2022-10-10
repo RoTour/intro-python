@@ -40,6 +40,7 @@ class Character:
     is_alive: bool = True
     experience: int = 0
     spells = []
+    mana_points = 5
     specialisation: CharacterType
 
     def __init__(self, _nom: str, _force: int, _arme: str, _nombreDeVies: int = 2, _niveau: ExperienceLevel = ExperienceLevel.BEGINNER):
@@ -61,12 +62,16 @@ class Character:
     def physical_attack(self, target, power: int = None):
         if power is None:
             power = random.randint(self.strength - 5, self.strength)
-        return Character.deal_damage(self, target, power)
+        return Character.deal_damage(self, target, power), True
 
     def cast_spell(self, target, spell):
-        return Character.deal_damage(self, target, spell.power)
+        if self.mana_points < spell.mana_cost:
+            print("You don't have enough mana points to cast this spell")
+            return False, False
+        self.mana_points -= spell.mana_cost
+        return Character.deal_damage(self, target, spell.power, spell.name), True
 
-    def deal_damage(self, target, damage):
+    def deal_damage(self, target, damage, attack_name: str = None):
         final_damage = damage * multipliers[self.level]
         target.strength -= final_damage
         if target.strength <= 0:
@@ -80,23 +85,25 @@ class Character:
         target.experience += 1
         self.check_level_up()
         target.check_level_up()
-        print(f"{self.name} inflicts {final_damage} to {target.name} with {self.weapon}. {target.name} now has {target.strength} strength point and {target.lives} lives left")
+        attack = self.weapon if attack_name is None else "the power of " + attack_name
+        print(f"{self.name} inflicts {final_damage} to {target.name} with {attack}. {target.name} now has {target.strength} strength point and {target.lives} lives left")
         print(
             f"EXP: {self.name}: {self.experience} ({self.level.value}) | {target.name}: {target.experience} ({self.level.value})")
         return False
 
 
-
-class Spell():
+class Spell:
     power: float
     name: str
+    mana_cost: int = 1
 
-    def __init__(self, _name: str, _power: float):
+    def __init__(self, _name: str, _power: float, _mana_cost: int = 1):
         self.name = _name
         self.power = _power
+        self.mana_cost = _mana_cost
 
     def __str__(self):
-        return f"{self.name} (power: {self.power})"
+        return f"{self.name} (power: {self.power} | Mana cost: {self.mana_cost})"
 
 
 class Mentor(Character):
@@ -104,8 +111,8 @@ class Mentor(Character):
     def __init__(self, _nom: str, _force: int, _arme: str):
         super().__init__(_nom, _force, _arme)
         self.spells = [
-            Spell("Exam surprise", self.strength * 2),
-            Spell("Ytrack challenge", self.strength * 2.25),
+            Spell("Exam surprise", self.strength * 2, 2),
+            Spell("Ytrack challenge", self.strength * 2.25, 3),
         ]
         self.specialisation = CharacterType.MENTOR
 
@@ -115,7 +122,7 @@ class Bachelor(Character):
     def __init__(self, _nom: str, _force: int, _arme: str):
         super().__init__(_nom, _force, _arme)
         self.spells = [
-            Spell("Stack overflow", self.strength * 1.5),
-            Spell("Google", self.strength * 1.75),
+            Spell("Stack overflow", self.strength * 1.5, 2),
+            Spell("Google", self.strength * 1.75, 3),
         ]
         self.specialisation = CharacterType.BACHELOR
