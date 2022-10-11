@@ -1,6 +1,7 @@
-from models import Action, Status, Mentor, Bachelor
+import python_learning.eval.tp1_advanced_version.pvp.menus as pvp_menus
+import menus as all_menus
 import utils as u
-import menus
+from models import Action, Status, Mentor, Bachelor, GameFeature
 
 # All variables and functions in this program are in French for consistency with the required attributes and methods
 # from the "Personnage" class.
@@ -25,7 +26,7 @@ def create_player():
 
 
 def attack(attacker, action_type: Action):
-    target = menus.select_player(
+    target = all_menus.select_player(
         players,
         f"{attacker.name}, choose the player to attack: "
     )
@@ -66,17 +67,20 @@ def handle_character_creation():
 def play_turn(player):
     print(f"{player.name}'s turn")
     print(f"Remaining players: {', '.join([player.name for player in players])}")
-    choice = menus.display_choices()
-    if choice == 1:
-        action = menus.select_action(player)
+    choice = all_menus.select_game_feature()
+    if choice == GameFeature.PVP.value:
+        action = pvp_menus.select_pvp_action(player)
         if action == Action.PHYSICAL:
             return Status.CONTINUE, attack(player, Action.PHYSICAL)
+        elif action == Action.SPELL:
+            return Status.CONTINUE, attack(player, Action.SPELL)
         elif action == Action.CHAT:
             chat(player)
             return Status.CONTINUE, False
-        elif action == Action.SPELL:
-            return Status.CONTINUE, attack(player, Action.SPELL)
-    elif choice == 2:
+    elif choice == GameFeature.PVE:
+        # TODO: Implement Player vs Entity
+        pass
+    elif choice == GameFeature.QUIT.value:
         return Status.STOP, False
 
 

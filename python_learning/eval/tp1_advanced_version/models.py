@@ -24,6 +24,12 @@ class CharacterType(Enum):
     BACHELOR = "Bachelor"
 
 
+class GameFeature(Enum):
+    PVP = 1
+    PVE = 2
+    QUIT = 3
+
+
 multipliers = {
     ExperienceLevel.BEGINNER: 1,
     ExperienceLevel.MEDIUM: 1.1,
