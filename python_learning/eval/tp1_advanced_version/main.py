@@ -1,6 +1,7 @@
-import python_learning.eval.tp1_advanced_version.pvp.menus as pvp_menus
+import pvp.menus as pvp_menus
 import menus as all_menus
 import utils as u
+import pve.engine as pve_engine
 from models import Action, Status, Mentor, Bachelor, GameFeature
 
 # All variables and functions in this program are in French for consistency with the required attributes and methods
@@ -68,7 +69,7 @@ def play_turn(player):
     print(f"{player.name}'s turn")
     print(f"Remaining players: {', '.join([player.name for player in players])}")
     choice = all_menus.select_game_feature()
-    if choice == GameFeature.PVP.value:
+    if choice == GameFeature.PVP.name:
         action = pvp_menus.select_pvp_action(player)
         if action == Action.PHYSICAL:
             return Status.CONTINUE, attack(player, Action.PHYSICAL)
@@ -77,11 +78,12 @@ def play_turn(player):
         elif action == Action.CHAT:
             chat(player)
             return Status.CONTINUE, False
-    elif choice == GameFeature.PVE:
-        # TODO: Implement Player vs Entity
-        pass
-    elif choice == GameFeature.QUIT.value:
+    elif choice == GameFeature.PVE.name:
+        pve_engine.start_random_fight(player)
+        return Status.CONTINUE, False
+    elif choice == GameFeature.QUIT.name:
         return Status.STOP, False
+    return Status.CONTINUE, False
 
 
 def main():

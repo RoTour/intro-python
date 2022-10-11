@@ -1,6 +1,5 @@
-from python_learning.eval.tp1_advanced_version.models import Character, Action
-import python_learning.eval.tp1_advanced_version.utils as u
-
+from models import Character, Action
+import utils as u
 
 def select_pvp_action(player: Character):
     while True:

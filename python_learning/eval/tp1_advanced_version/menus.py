@@ -1,5 +1,5 @@
 import utils as u
-from models import Action, Character, GameFeature
+from models import GameFeature
 
 
 def select_player(players, msg: str = "Select a player: "):
@@ -16,6 +16,8 @@ def select_player(players, msg: str = "Select a player: "):
 
 
 def select_game_feature():
-    print("1 - Action")
-    print("2 - Quit")
-    return u.select_item([GameFeature.PVP.value, GameFeature.PVE.value], "Select an option: ")
+    return u.select_item([
+        GameFeature.PVP.name,
+        GameFeature.PVE.name,
+        GameFeature.QUIT.name
+    ], "What do you want to do ?")
