@@ -20,6 +20,9 @@ class Corp:
 class MicroCorp(Corp):
     corp_type = "Micro Corporation"
 
+    def __init__(self, name: str):
+        super(MicroCorp, self).__init__(name)
+
 
 class SmallCorp(Corp):
     corp_type = "Small Corporation"
