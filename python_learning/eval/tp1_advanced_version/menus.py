@@ -1,8 +1,8 @@
 import utils as u
-from models import GameFeature
+from enums import GameFeature
 
 
-def select_player(players, msg: str = "Select a player: "):
+def select_target(players, msg: str = "Select a player: "):
     while True:
         u.clear_console()
         for i, personnage in enumerate(players):
